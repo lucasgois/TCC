@@ -1,7 +1,9 @@
-package sqlite.ambiente;
+package com.github.lucasgois.tcc.sqlite.modulo;
 
+import com.github.lucasgois.tcc.exce.TccRuntimeException;
+import com.github.lucasgois.tcc.sqlite.SqliteConnection;
 import lombok.extern.slf4j.Slf4j;
-import sqlite.SqliteConnection;
+import org.sqlite.SQLiteException;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -12,14 +14,15 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Slf4j
-public class AmbienteDao {
+public class ModuloDao {
 
-    private static final String QUERY_FIND_BY_HASH = "SELECT uuid_ambiente, nome FROM ambientes WHERE uuid_ambiente = ?";
-    private static final String QUERY_INSERT = "INSERT INTO ambientes (uuid_ambiente, nome, criado_em, atualizado_em) VALUES (?, ?, ?, ?)";
-    private static final String QUERY_DELETE = "DELETE FROM ambientes WHERE uuid_ambiente = ?";
+    private static final String QUERY_FIND_BY_HASH = "SELECT uuid_modulo, nome FROM modulos WHERE uuid_modulo = ?";
+    private static final String QUERY_INSERT = "INSERT INTO modulos (uuid_modulo, nome, criado_em, atualizado_em) VALUES (?, ?, ?, ?)";
+    private static final String QUERY_DELETE = "DELETE FROM modulos WHERE uuid_modulo = ?";
+
     private final SqliteConnection sqliteConnection = SqliteConnection.getInstance();
 
-    public Optional<Ambiente> findByHash(final String hash) throws SQLException, IOException {
+    public Optional<Modulo> findByHash(final String hash) throws SQLException, IOException {
         log.info("find by hash: {}", hash);
 
         final Connection conn = sqliteConnection.getConnection();
@@ -31,12 +34,11 @@ public class AmbienteDao {
             try (final ResultSet resultSet = statement.executeQuery()) {
 
                 if (resultSet.next()) {
-                    final Ambiente arquivo = new Ambiente();
+                    final Modulo modulo = new Modulo();
+                    modulo.setHash(resultSet.getString("uuid_modulo"));
+                    modulo.setNome(resultSet.getString("nome"));
 
-                    arquivo.setHash(resultSet.getString("uuid_ambiente"));
-                    arquivo.setName(resultSet.getString("nome"));
-
-                    return Optional.of(arquivo);
+                    return Optional.of(modulo);
 
                 } else {
                     return Optional.empty();
@@ -45,7 +47,7 @@ public class AmbienteDao {
         }
     }
 
-    public void insert(final Ambiente arquivo) throws SQLException, IOException {
+    public void insert(final Modulo arquivo) {
         log.info("insert: {}", arquivo);
 
         final String dateTime = LocalDateTime.now().toString();
@@ -54,22 +56,29 @@ public class AmbienteDao {
 
         try (final PreparedStatement statement = conn.prepareStatement(QUERY_INSERT)) {
             statement.setString(1, arquivo.getHash());
-            statement.setString(2, arquivo.getName());
+            statement.setString(2, arquivo.getNome());
             statement.setString(3, dateTime);
             statement.setString(4, dateTime);
 
             log.info("{}", statement);
             statement.executeUpdate();
+
+        } catch (final SQLiteException ex) {
+
+            if (!"A UNIQUE constraint failed".equals(ex.getResultCode().message)) {
+                throw new TccRuntimeException(ex);
+            }
+
+        } catch (final SQLException ex) {
+            throw new TccRuntimeException(ex);
         }
     }
 
-    public void delete(final String hash) throws SQLException, IOException {
-        log.info("delete: {}", hash);
-
+    public void delete(final String id) throws SQLException, IOException {
         final Connection conn = sqliteConnection.getConnection();
 
         try (final PreparedStatement statement = conn.prepareStatement(QUERY_DELETE)) {
-            statement.setString(1, hash);
+            statement.setString(1, id);
 
             log.info("{}", statement);
             statement.executeUpdate();

@@ -1,5 +1,6 @@
 package com.github.lucasgois.tcc.util;
 
+import com.github.lucasgois.tcc.exce.TccRuntimeException;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +17,20 @@ import java.util.List;
 @Slf4j
 public class Util {
 
+    private static MessageDigest messageDigest;
+
     private Util() {
+    }
+
+    private static MessageDigest getMessageDigest() {
+        if (messageDigest == null) {
+            try {
+                messageDigest = MessageDigest.getInstance("SHA-256");
+            } catch (NoSuchAlgorithmException ex) {
+                throw new TccRuntimeException("SHA-256 não pode ser carrado", ex);
+            }
+        }
+        return messageDigest;
     }
 
     @NotNull
@@ -36,12 +50,7 @@ public class Util {
 
                     log.info("{} {}", fileHash, filePathString);
 
-                    fileList.add(
-                            new Pair<>(
-                                    fileHash,
-                                    filePathString
-                            )
-                    );
+                    fileList.add(new Pair<>(fileHash, filePathString));
                 }
             }
         }
@@ -56,10 +65,10 @@ public class Util {
     }
 
     @NotNull
-    public static String calcularHash(byte[] content) throws NoSuchAlgorithmException {
-        final MessageDigest md = MessageDigest.getInstance("SHA-256");
-        md.update(content);
-        return byteToHex(md.digest());
+    public static String calcularHash(byte[] content) {
+        final MessageDigest digest256 = getMessageDigest();
+        digest256.update(content);
+        return byteToHex(digest256.digest());
     }
 
     @NotNull

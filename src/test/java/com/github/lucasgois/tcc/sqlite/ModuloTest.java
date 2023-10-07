@@ -4,8 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
-import sqlite.modulo.Modulo;
-import sqlite.modulo.ModuloDao;
+import com.github.lucasgois.tcc.sqlite.modulo.Modulo;
+import com.github.lucasgois.tcc.sqlite.modulo.ModuloDao;
 
 import java.util.Optional;
 

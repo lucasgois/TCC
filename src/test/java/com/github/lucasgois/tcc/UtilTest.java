@@ -28,7 +28,7 @@ class UtilTest {
                 "\\pasta\\Arquivo1.txt",
         };
 
-        List<Pair<String, String>> resultList = Util.listFilesWithHashes(testDirectory);
+        final List<Pair<String, String>> resultList = Util.listFilesWithHashes(testDirectory);
 
         assertEquals(4, resultList.size());
         for (int i = 0; i < expectedFilePaths.length; i++) {

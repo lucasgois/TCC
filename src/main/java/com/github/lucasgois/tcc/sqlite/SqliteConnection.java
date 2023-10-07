@@ -1,5 +1,6 @@
-package sqlite;
+package com.github.lucasgois.tcc.sqlite;
 
+import com.github.lucasgois.tcc.exce.TccRuntimeException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -17,6 +18,7 @@ import static java.util.Objects.requireNonNull;
 public class SqliteConnection {
 
     private static final SqliteConnection INSTANCE = new SqliteConnection();
+    private static final String DATABASE_SCHEME_FILE = "database_scheme.sql";
     private Connection connection;
     private boolean createDatabaseFlag = true;
 
@@ -28,11 +30,11 @@ public class SqliteConnection {
     }
 
 
-    public static Connection getConn() throws SQLException, IOException {
+    public static Connection getConn() {
         return INSTANCE.getConnection();
     }
 
-    public Connection getConnection() throws SQLException, IOException {
+    public Connection getConnection() {
 
         if (!connected()) {
             connect();
@@ -41,22 +43,36 @@ public class SqliteConnection {
     }
 
 
-    private boolean connected() throws SQLException {
+    private boolean connected() {
+
         if (connection == null) return false;
-        return connection.isValid(2);
+
+        try {
+            return connection.isValid(2);
+        } catch (final SQLException ex) {
+            throw new TccRuntimeException(ex);
+        }
     }
 
-    private void connect() throws SQLException, IOException {
+    private void connect() {
         Path url = Path.of(System.getProperty("user.home") + "\\tcc");
 
         if (Files.notExists(url)) {
-            Files.createDirectories(url);
+            try {
+                Files.createDirectories(url);
+            } catch (IOException ex) {
+                throw new TccRuntimeException("Não foi possível criar o diretório: " + url, ex);
+            }
         }
         log.info("{}", url.toUri());
 
         url = url.resolve("tcc.db");
 
-        connection = DriverManager.getConnection("jdbc:sqlite:" + url);
+        try {
+            connection = DriverManager.getConnection("jdbc:sqlite:" + url);
+        } catch (SQLException ex) {
+            throw new TccRuntimeException("Não foi possível conectar ao banco: " + url, ex);
+        }
 
         if (createDatabaseFlag) {
             createDatabaseFlag = false;
@@ -64,9 +80,9 @@ public class SqliteConnection {
         }
     }
 
-    private void createDatabase() throws SQLException, IOException {
+    private void createDatabase() {
 
-        try (final InputStream inputStream = getClass().getClassLoader().getResourceAsStream("database_scheme.sql")) {
+        try (final InputStream inputStream = getClass().getClassLoader().getResourceAsStream(DATABASE_SCHEME_FILE)) {
             requireNonNull(inputStream, "Problema ao carregar esquema do banco de dados");
 
             final byte[] bytes = inputStream.readAllBytes();
@@ -75,6 +91,9 @@ public class SqliteConnection {
             try (final Statement statement = connection.createStatement()) {
                 statement.executeUpdate(sqlContent);
             }
+
+        } catch (Exception ex) {
+            throw new TccRuntimeException(ex);
         }
     }
 }
