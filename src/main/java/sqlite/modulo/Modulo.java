@@ -1,18 +1,15 @@
-package sqlite.arquivo;
+package sqlite.modulo;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.nio.file.Path;
-
 @Setter
 @Getter
 @ToString
 @NoArgsConstructor
-public class Arquivo {
+public class Modulo {
     private String hash;
-    private Path caminho;
-    private byte[] bytea;
+    private String nome;
 }

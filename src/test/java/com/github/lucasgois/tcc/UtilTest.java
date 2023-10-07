@@ -25,11 +25,12 @@ class UtilTest {
                 "\\File1.txt",
                 "\\File2.txt",
                 "\\File3.txt",
+                "\\pasta\\SubFile.txt",
         };
 
         List<Pair<String, String>> resultList = Util.listFilesWithHashes(testDirectory);
 
-        assertEquals(3, resultList.size());
+        assertEquals(4, resultList.size());
         for (int i = 0; i < expectedFilePaths.length; i++) {
             assertEquals(expectedFilePaths[i], resultList.get(i).getValue());
         }
@@ -43,7 +44,7 @@ class UtilTest {
         final byte[] actual = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
         final String expected = "3E5718FEA51A8F3F5BACA61C77AFAB473C1810F8B9DB330273B4011CE92C787E";
 
-        assertEquals(expected, Util.calculateHash(actual));
+        assertEquals(expected, Util.calcularHash(actual));
     }
 
     @Test

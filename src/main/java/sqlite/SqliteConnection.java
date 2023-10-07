@@ -1,6 +1,5 @@
 package sqlite;
 
-import com.github.lucasgois.tcc.excep.TccException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -11,6 +10,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import static java.util.Objects.requireNonNull;
 
 @Slf4j
 public class SqliteConnection {
@@ -26,7 +27,12 @@ public class SqliteConnection {
         return INSTANCE;
     }
 
-    public Connection getConnection() throws SQLException, IOException, TccException {
+
+    public static Connection getConn() throws SQLException, IOException {
+        return INSTANCE.getConnection();
+    }
+
+    public Connection getConnection() throws SQLException, IOException {
 
         if (!connected()) {
             connect();
@@ -40,7 +46,7 @@ public class SqliteConnection {
         return connection.isValid(2);
     }
 
-    private void connect() throws SQLException, IOException, TccException {
+    private void connect() throws SQLException, IOException {
         Path url = Path.of(System.getProperty("user.home") + "\\tcc");
 
         if (Files.notExists(url)) {
@@ -58,13 +64,10 @@ public class SqliteConnection {
         }
     }
 
-    private void createDatabase() throws SQLException, IOException, TccException {
+    private void createDatabase() throws SQLException, IOException {
 
         try (final InputStream inputStream = getClass().getClassLoader().getResourceAsStream("database_scheme.sql")) {
-
-            if (inputStream == null) {
-                throw new TccException("Problema ao carregar esquema do banco de dados");
-            }
+            requireNonNull(inputStream, "Problema ao carregar esquema do banco de dados");
 
             final byte[] bytes = inputStream.readAllBytes();
             final String sqlContent = new String(bytes);

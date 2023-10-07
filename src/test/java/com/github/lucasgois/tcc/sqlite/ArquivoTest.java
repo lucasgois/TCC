@@ -1,9 +1,11 @@
-package com.github.lucasgois.tcc;
+package com.github.lucasgois.tcc.sqlite;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import sqlite.Dao;
 import sqlite.arquivo.Arquivo;
 import sqlite.arquivo.ArquivoDao;
 
@@ -12,7 +14,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-class AmbienteTest {
+class ArquivoTest {
 
     private ArquivoDao dao;
 
@@ -21,13 +23,15 @@ class AmbienteTest {
         dao = new ArquivoDao();
     }
 
-    @Test
-    void insert_find_delete() throws Exception {
-        final Arquivo arquivoOriginal = new Arquivo();
-        arquivoOriginal.setHash("123");
-        arquivoOriginal.setBytea("123".getBytes());
-
-        dao.delete(arquivoOriginal.getHash());
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "src/test/resources/files/File1.txt",
+            "src/test/resources/files/File2.txt",
+            "src/test/resources/files/File3.txt",
+            "src/test/resources/files/pasta/SubFile.txt"
+    })
+    void insert_find_delete(final String caminho) throws Exception {
+        final Arquivo arquivoOriginal = Dao.arquivo(caminho);
 
         dao.insert(arquivoOriginal);
 

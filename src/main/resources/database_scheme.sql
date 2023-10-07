@@ -1,62 +1,73 @@
-CREATE TABLE IF NOT EXISTS modules
+CREATE TABLE IF NOT EXISTS modulos
 (
-    module_id         TEXT PRIMARY KEY,
-    module_name       TEXT NOT NULL,
-    module_created_at TEXT,
-    module_updated_at TEXT
+    uuid_modulo   TEXT NOT NULL,
+    nome          TEXT NOT NULL,
+    criado_em     TEXT,
+    atualizado_em TEXT,
+    PRIMARY KEY (uuid_modulo),
+    UNIQUE (uuid_modulo),
+    UNIQUE (nome)
 );
-CREATE INDEX IF NOT EXISTS idx_module_id ON modules (module_id);
 
-CREATE TABLE IF NOT EXISTS environments
+CREATE TABLE IF NOT EXISTS ambientes
 (
-    environment_id         TEXT PRIMARY KEY,
-    environment_name       TEXT NOT NULL,
-    environment_created_at TEXT,
-    environment_updated_at TEXT
+    uuid_ambiente TEXT NOT NULL,
+    nome          TEXT NOT NULL,
+    criado_em     TEXT,
+    atualizado_em TEXT,
+    PRIMARY KEY (uuid_ambiente),
+    UNIQUE (uuid_ambiente),
+    UNIQUE (nome)
 );
-CREATE INDEX IF NOT EXISTS idx_environment_id ON environments (environment_id);
 
-CREATE TABLE IF NOT EXISTS file_registries
+CREATE TABLE IF NOT EXISTS arquivos
 (
-    file_registry_hash       TEXT PRIMARY KEY,
-    file_registry_bytea      TEXT NOT NULL,
-    file_registry_created_at TEXT,
-    file_registry_updated_at TEXT
+    hash          TEXT NOT NULL,
+    bytea         TEXT NOT NULL,
+    criado_em     TEXT,
+    atualizado_em TEXT,
+    PRIMARY KEY (hash),
+    UNIQUE (hash)
 );
-CREATE INDEX IF NOT EXISTS idx_file_registry_hash ON file_registries (file_registry_hash);
 
-CREATE TABLE IF NOT EXISTS file_locations_map
+CREATE TABLE IF NOT EXISTS localizacoes
 (
-    file_location_id         TEXT PRIMARY KEY,
-    file_location_hash_ref   TEXT NOT NULL,
-    file_location_path       TEXT NOT NULL,
-    file_location_created_at TEXT,
-    file_location_updated_at TEXT,
-    FOREIGN KEY (file_location_hash_ref) REFERENCES file_registries (file_registry_hash)
+    uuid_localizacao TEXT NOT NULL,
+    hash_arquivo     TEXT NOT NULL,
+    caminho          TEXT NOT NULL,
+    criado_em        TEXT,
+    atualizado_em    TEXT,
+    PRIMARY KEY (uuid_localizacao),
+    FOREIGN KEY (hash_arquivo) REFERENCES arquivos (hash),
+    UNIQUE (uuid_localizacao),
+    UNIQUE (hash_arquivo, caminho)
 );
-CREATE INDEX IF NOT EXISTS idx_file_location_id ON file_locations_map (file_location_id);
 
-CREATE TABLE IF NOT EXISTS versions
+CREATE TABLE IF NOT EXISTS mapeamento
 (
-    version_id              TEXT PRIMARY KEY,
-    version_name            TEXT NOT NULL,
-    version_environment_ref TEXT NOT NULL,
-    version_module_ref      TEXT NOT NULL,
-    version_created_at      TEXT,
-    version_updated_at      TEXT,
-    FOREIGN KEY (version_environment_ref) REFERENCES environments (environment_id),
-    FOREIGN KEY (version_module_ref) REFERENCES modules (module_id)
+    uuid_mapeamento  TEXT NOT NULL,
+    uuid_versao      TEXT NOT NULL,
+    uuid_localizacao TEXT NOT NULL,
+    criado_em        TEXT,
+    atualizado_em    TEXT,
+    PRIMARY KEY (uuid_mapeamento),
+    FOREIGN KEY (uuid_versao) REFERENCES versoes (uuid_versao),
+    FOREIGN KEY (uuid_localizacao) REFERENCES localizacoes (uuid_localizacao),
+    UNIQUE (uuid_mapeamento),
+    UNIQUE (uuid_versao, uuid_localizacao)
 );
-CREATE INDEX IF NOT EXISTS idx_version_id ON versions (version_id);
 
-CREATE TABLE IF NOT EXISTS files_version_map
+CREATE TABLE IF NOT EXISTS versoes
 (
-    file_version_map_id           TEXT PRIMARY KEY,
-    file_version_map_version_ref  TEXT NOT NULL,
-    file_version_map_location_ref TEXT NOT NULL,
-    file_version_map_created_at   TEXT,
-    file_version_map_updated_at   TEXT,
-    FOREIGN KEY (file_version_map_version_ref) REFERENCES versions (version_id),
-    FOREIGN KEY (file_version_map_location_ref) REFERENCES file_locations_map (file_location_id)
+    uuid_versao   TEXT NOT NULL,
+    nome          TEXT NOT NULL,
+    uuid_ambiente TEXT NOT NULL,
+    uuid_modulo   TEXT NOT NULL,
+    criado_em     TEXT,
+    atualizado_em TEXT,
+    PRIMARY KEY (uuid_versao),
+    FOREIGN KEY (uuid_ambiente) REFERENCES ambientes (uuid_ambiente),
+    FOREIGN KEY (uuid_modulo) REFERENCES modulos (uuid_modulo),
+    UNIQUE (uuid_versao),
+    UNIQUE (nome)
 );
-CREATE INDEX IF NOT EXISTS idx_file_version_map_id ON files_version_map (file_version_map_id);

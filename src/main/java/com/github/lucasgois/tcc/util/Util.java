@@ -31,7 +31,7 @@ public class Util {
                     fileList.addAll(listFilesWithHashes(directoryPathMain, filePath));
 
                 } else {
-                    final String fileHash = calculateHash(Files.readAllBytes(filePath));
+                    final String fileHash = calcularHash(Files.readAllBytes(filePath));
                     final String filePathString = filePath.toString().replace(directoryPathMain, "");
 
                     log.info("{} {}", fileHash, filePathString);
@@ -56,7 +56,7 @@ public class Util {
     }
 
     @NotNull
-    public static String calculateHash(byte[] content) throws NoSuchAlgorithmException {
+    public static String calcularHash(byte[] content) throws NoSuchAlgorithmException {
         final MessageDigest md = MessageDigest.getInstance("SHA-256");
         md.update(content);
         return byteToHex(md.digest());
