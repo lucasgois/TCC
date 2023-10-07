@@ -6,6 +6,7 @@ import sqlite.arquivo.Arquivo;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
 
@@ -19,7 +20,7 @@ public class Dao {
         final Path path = Path.of(caminho);
 
         if (Files.notExists(path)) {
-            throw new IllegalStateException();
+            throw new NoSuchFileException("Arquivo não encontrado: " + path);
         }
 
         final byte[] bytea = Files.readAllBytes(path);

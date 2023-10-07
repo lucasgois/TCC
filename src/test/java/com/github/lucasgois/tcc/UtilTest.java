@@ -18,14 +18,14 @@ class UtilTest {
 
     @Test
     void load_files_hash() throws Exception {
-        final Path testDirectory = Path.of("src/test/resources/files");
-        final String expectedHashEqual = "9F0FA1CD32380E2541D81AD69B0D0B5B6BF4C56533E760F29520E4EFD7346288";
-        final String expectedHashDifferent = "A21BE189EBC1DC423117B0FEF4C5C0B74D819BE0B667625E83A190F234D9A89D";
+        final Path testDirectory = Path.of("src/test/resources/entrada");
+        final String expectedHashEqual = "C284DD25302D560AF3D395F643CD9394C56D22CB673E23E10F7F1D5955638420";
+        final String expectedHashDifferent = "87ECE68D5E6CD46732446320AA32A1CB0BCCBB78CC39CD4E43DBBEFFD1D5C56A";
         final String[] expectedFilePaths = {
-                "\\File1.txt",
-                "\\File2.txt",
-                "\\File3.txt",
-                "\\pasta\\SubFile.txt",
+                "\\Arquivo1.txt",
+                "\\Arquivo2.txt",
+                "\\Arquivo3.txt",
+                "\\pasta\\Arquivo1.txt",
         };
 
         List<Pair<String, String>> resultList = Util.listFilesWithHashes(testDirectory);

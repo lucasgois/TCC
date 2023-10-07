@@ -25,10 +25,10 @@ class ArquivoTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
-            "src/test/resources/files/File1.txt",
-            "src/test/resources/files/File2.txt",
-            "src/test/resources/files/File3.txt",
-            "src/test/resources/files/pasta/SubFile.txt"
+            "src/test/resources/entrada/Arquivo1.txt",
+            "src/test/resources/entrada/Arquivo2.txt",
+            "src/test/resources/entrada/Arquivo3.txt",
+            "src/test/resources/entrada/pasta/Arquivo1.txt"
     })
     void insert_find_delete(final String caminho) throws Exception {
         final Arquivo arquivoOriginal = Dao.arquivo(caminho);
