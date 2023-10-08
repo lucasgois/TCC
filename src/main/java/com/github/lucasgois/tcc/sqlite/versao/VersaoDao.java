@@ -1,6 +1,6 @@
 package com.github.lucasgois.tcc.sqlite.versao;
 
-import com.github.lucasgois.tcc.exce.TccRuntimeException;
+import com.github.lucasgois.tcc.exceptions.TccRuntimeException;
 import com.github.lucasgois.tcc.localizacoes.LocalizacoesDao;
 import com.github.lucasgois.tcc.sqlite.ambiente.Ambiente;
 import com.github.lucasgois.tcc.sqlite.ambiente.AmbienteDao;
@@ -9,6 +9,7 @@ import com.github.lucasgois.tcc.sqlite.arquivo.ArquivoDao;
 import com.github.lucasgois.tcc.sqlite.mapeamento.MapeamentoDao;
 import com.github.lucasgois.tcc.sqlite.modulo.Modulo;
 import com.github.lucasgois.tcc.sqlite.modulo.ModuloDao;
+import com.github.lucasgois.tcc.util.Util;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
@@ -53,7 +54,7 @@ public class VersaoDao {
             statement.setString(++i, criadoEm);
             statement.setString(++i, criadoEm);
 
-            log.info("{}", statement);
+            log.info("{}\n", statement);
             statement.executeUpdate();
 
             return uuid;
@@ -66,10 +67,9 @@ public class VersaoDao {
     public static Optional<String> buscarUUID(@NotNull final String nome) {
 
         try (final PreparedStatement statement = getConn().prepareStatement("SELECT uuid_versao FROM versoes WHERE nome = ?")) {
-            int i = 0;
-            statement.setString(++i, nome);
+            statement.setString(1, nome);
 
-            log.info("{}", statement);
+            log.info("{}\n", statement);
 
             try (final ResultSet resultSet = statement.executeQuery()) {
 
@@ -99,7 +99,7 @@ public class VersaoDao {
 
         try (final PreparedStatement statement = getConn().prepareStatement(query)) {
 
-            log.info("{}", statement);
+            log.info("{}\n", statement);
 
             try (final ResultSet resultSet = statement.executeQuery()) {
 
@@ -121,7 +121,7 @@ public class VersaoDao {
         return versoes;
     }
 
-    public static Optional<String> buscarUuid(final String versao, @NotNull final Modulo modulo, @NotNull final Ambiente ambiente) {
+    public static Optional<String> buscarUuidPoVersaoModuloAmbiente(final String versao, @NotNull final Modulo modulo, @NotNull final Ambiente ambiente) {
         final String sql = """
                 SELECT versoes.uuid_versao FROM versoes \
                 WHERE versoes.nome = ? \
@@ -134,6 +134,8 @@ public class VersaoDao {
             statement.setString(++i, versao);
             statement.setString(++i, modulo.getHash());
             statement.setString(++i, ambiente.getHash());
+
+            log.info("{}\n", statement);
 
             try (final ResultSet resultSet = statement.executeQuery()) {
 
@@ -159,7 +161,7 @@ public class VersaoDao {
             try {
                 final Path caminhoArquivo = caminhoVersao.resolve(arquivo.getCaminho());
 
-                Files.createDirectories(caminhoArquivo.getParent());
+                Util.criarPasta(caminhoArquivo.getParent());
 
                 if (Files.notExists(caminhoArquivo)) {
                     Files.write(caminhoArquivo, arquivo.getBytea());
@@ -179,7 +181,7 @@ public class VersaoDao {
         final String uuidVersao = insertVersao(versao);
 
         for (final Arquivo arquivo : versao.getArquivos()) {
-            final String uuidLocalizacao = new ArquivoDao().insert(arquivo);
+            final String uuidLocalizacao = ArquivoDao.insert(arquivo);
             MapeamentoDao.insertMapeamento(uuidVersao, uuidLocalizacao);
         }
     }

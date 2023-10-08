@@ -3,7 +3,6 @@ package com.github.lucasgois.tcc;
 import com.github.lucasgois.tcc.util.Util;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -29,7 +28,7 @@ class UtilTest {
                 "\\pasta\\Arquivo1.txt",
         };
 
-        final List<Pair<String, String>> resultList = Util.listFilesWithHashes(testDirectory);
+        final List<Pair<String, String>> resultList = Util.criarListaDeArquivoEHash(testDirectory);
 
         assertEquals(4, resultList.size());
         for (int i = 0; i < expectedFilePaths.length; i++) {

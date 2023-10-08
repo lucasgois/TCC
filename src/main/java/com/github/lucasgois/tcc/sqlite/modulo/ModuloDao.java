@@ -1,8 +1,9 @@
 package com.github.lucasgois.tcc.sqlite.modulo;
 
-import com.github.lucasgois.tcc.exce.TccRuntimeException;
+import com.github.lucasgois.tcc.exceptions.TccRuntimeException;
 import com.github.lucasgois.tcc.sqlite.SqliteConnection;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.sqlite.SQLiteException;
 
 import java.io.IOException;
@@ -47,9 +48,8 @@ public class ModuloDao {
         }
     }
 
-    public void insert(final Modulo arquivo) {
-        log.info("insert: {}", arquivo);
 
+    public void insert(@NotNull final Modulo arquivo) {
         final String dateTime = LocalDateTime.now().toString();
 
         final Connection conn = sqliteConnection.getConnection();
@@ -60,7 +60,7 @@ public class ModuloDao {
             statement.setString(3, dateTime);
             statement.setString(4, dateTime);
 
-            log.info("{}", statement);
+            log.info("{}\n", statement);
             statement.executeUpdate();
 
         } catch (final SQLiteException ex) {

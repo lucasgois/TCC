@@ -14,7 +14,6 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -30,7 +29,7 @@ class VersaoTest {
         final Ambiente ambiente = Ambiente.criar("Produção");
 
         final Path caminho = Path.of("src/test/resources/entrada");
-        final List<Pair<String, String>> arquivos = Util.listFilesWithHashes(caminho);
+        final List<Pair<String, String>> arquivos = Util.criarListaDeArquivoEHash(caminho);
 
         final Versao versao = new Versao();
         versao.setNome("2310.2");
@@ -57,9 +56,7 @@ class VersaoTest {
 
             final Path caminhoVersao = saida.resolve(versao.getVersao());
 
-            if (Files.notExists(caminhoVersao)) {
-                Files.createDirectories(caminhoVersao);
-            }
+            Util.criarPasta(caminhoVersao);
 
             VersaoDao.buscar(versao.getUuid(), caminhoVersao);
         }

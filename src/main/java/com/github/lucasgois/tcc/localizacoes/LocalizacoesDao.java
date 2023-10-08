@@ -1,6 +1,6 @@
 package com.github.lucasgois.tcc.localizacoes;
 
-import com.github.lucasgois.tcc.exce.TccRuntimeException;
+import com.github.lucasgois.tcc.exceptions.TccRuntimeException;
 import com.github.lucasgois.tcc.sqlite.arquivo.Arquivo;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +29,7 @@ public class LocalizacoesDao {
             statement.setString(++i, hash);
             statement.setString(++i, caminho);
 
-            log.info("{}", statement);
+            log.info("{}\n", statement);
 
             try (final ResultSet resultSet = statement.executeQuery()) {
 
@@ -64,7 +64,7 @@ public class LocalizacoesDao {
             statement.setString(++i, criadoEm);
             statement.setString(++i, criadoEm);
 
-            log.info("{}", statement);
+            log.info("{}\n", statement);
             statement.executeUpdate();
 
         } catch (final SQLException ex) {
@@ -86,7 +86,7 @@ public class LocalizacoesDao {
         try (final PreparedStatement statement = getConn().prepareStatement(sql)) {
             statement.setString(1, uuid);
 
-            log.info("{}", statement);
+            log.info("{}\n", statement);
 
             try (final ResultSet resultSet = statement.executeQuery()) {
                 final Arquivo arquivo = new Arquivo();

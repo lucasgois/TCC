@@ -18,20 +18,20 @@ public class Dao {
     }
 
     @NotNull
-    public static Arquivo arquivo(final String caminho) throws IOException, NoSuchAlgorithmException {
-        final Path path = Path.of(caminho);
+    public static Arquivo arquivo(@NotNull final String caminho) throws IOException, NoSuchAlgorithmException {
+        final Path caminhoCompleto = Path.of(caminho);
 
-        if (Files.notExists(path)) {
-            log.error("{}", path);
-            log.error("{}", path.toAbsolutePath());
-            throw new NoSuchFileException("Arquivo não encontrado: " + path);
+        if (Files.notExists(caminhoCompleto)) {
+            log.error("{}", caminhoCompleto);
+            log.error("{}", caminhoCompleto.toAbsolutePath());
+            throw new NoSuchFileException("Arquivo não encontrado: " + caminhoCompleto);
         }
 
-        final byte[] bytea = Files.readAllBytes(path);
+        final byte[] bytea = Files.readAllBytes(caminhoCompleto);
 
         final Arquivo arquivo = new Arquivo();
 
-        arquivo.setCaminho(path);
+        arquivo.setCaminho(caminhoCompleto.subpath(1, caminhoCompleto.getNameCount()));
         arquivo.setHash(Util.calcularHash(bytea));
         arquivo.setBytea(bytea);
 

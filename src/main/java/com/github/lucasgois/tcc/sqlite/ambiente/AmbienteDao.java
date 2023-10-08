@@ -1,7 +1,8 @@
 package com.github.lucasgois.tcc.sqlite.ambiente;
 
-import com.github.lucasgois.tcc.exce.TccRuntimeException;
+import com.github.lucasgois.tcc.exceptions.TccRuntimeException;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.sqlite.SQLiteException;
 
 import java.io.IOException;
@@ -44,9 +45,7 @@ public class AmbienteDao {
         }
     }
 
-    public void insert(final Ambiente arquivo) {
-        log.info("insert: {}", arquivo);
-
+    public void insert(@NotNull final Ambiente arquivo) {
         final String dateTime = LocalDateTime.now().toString();
 
         try (final PreparedStatement statement = getConn().prepareStatement(QUERY_INSERT)) {
@@ -55,7 +54,7 @@ public class AmbienteDao {
             statement.setString(3, dateTime);
             statement.setString(4, dateTime);
 
-            log.info("{}", statement);
+            log.info("{}\n", statement);
             statement.executeUpdate();
 
         } catch (final SQLiteException ex) {

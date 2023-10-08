@@ -1,6 +1,6 @@
 package com.github.lucasgois.tcc.sqlite.mapeamento;
 
-import com.github.lucasgois.tcc.exce.TccRuntimeException;
+import com.github.lucasgois.tcc.exceptions.TccRuntimeException;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +27,8 @@ public class MapeamentoDao {
             statement.setString(++i, uuidVersao);
             statement.setString(++i, uuidLocalizacao);
 
-            log.info("{}", statement);
+            log.info("{}\n", statement);
+
             try (final ResultSet resultSet = statement.executeQuery()) {
 
                 if (resultSet.next()) {
@@ -59,7 +60,7 @@ public class MapeamentoDao {
             statement.setString(++i, criadoEm);
             statement.setString(++i, criadoEm);
 
-            log.info("{}", statement);
+            log.info("{}\n", statement);
             statement.executeUpdate();
 
         } catch (final SQLException ex) {
@@ -77,6 +78,8 @@ public class MapeamentoDao {
 
         try (final PreparedStatement statement = getConn().prepareStatement(sql)) {
             statement.setString(1, uuidVersao);
+
+            log.info("{}\n", statement);
 
             try (final ResultSet resultSet = statement.executeQuery()) {
 

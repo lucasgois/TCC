@@ -1,6 +1,6 @@
 package com.github.lucasgois.tcc.sqlite.arquivo;
 
-import com.github.lucasgois.tcc.exce.TccRuntimeException;
+import com.github.lucasgois.tcc.exceptions.TccRuntimeException;
 import com.github.lucasgois.tcc.localizacoes.LocalizacoesDao;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -19,6 +19,8 @@ public class ArquivoDao {
     private static final String QUERY_INSERT_ARQUIVO = "INSERT INTO arquivos (hash, bytea, criado_em, atualizado_em) VALUES (?, ?, ?, ?)";
     private static final String QUERY_DELETE = "DELETE FROM arquivos WHERE hash = ?";
 
+    private ArquivoDao() {
+    }
 
     private static void insertArquivo(@NotNull final Arquivo arquivo) {
 
@@ -36,7 +38,7 @@ public class ArquivoDao {
             statement.setString(3, criadoEm);
             statement.setString(4, criadoEm);
 
-            log.info("{}", statement);
+            log.info("{}\n", statement);
             statement.executeUpdate();
 
         } catch (final SQLException ex) {
@@ -49,7 +51,8 @@ public class ArquivoDao {
         try (final PreparedStatement statement = getConn().prepareStatement("SELECT count(1) = 1 AS existe FROM arquivos WHERE hash = ?")) {
             statement.setString(1, hash);
 
-            log.info("{}", statement);
+            log.info("{}\n", statement);
+
             try (final ResultSet resultSet = statement.executeQuery()) {
 
                 if (resultSet.next()) {
@@ -70,7 +73,8 @@ public class ArquivoDao {
         try (final PreparedStatement statement = getConn().prepareStatement("SELECT hash, bytea FROM arquivos WHERE hash = ?")) {
             statement.setString(1, hash);
 
-            log.info("{}", statement);
+            log.info("{}\n", statement);
+
             try (final ResultSet resultSet = statement.executeQuery()) {
 
                 if (resultSet.next()) {
@@ -92,8 +96,6 @@ public class ArquivoDao {
     }
 
     public static String insert(final Arquivo arquivo) {
-        log.info("{}", arquivo);
-
         insertArquivo(arquivo);
 
         return LocalizacoesDao.insert(arquivo.getHash(), arquivo.getCaminho().toString());
@@ -104,7 +106,7 @@ public class ArquivoDao {
         try (final PreparedStatement statement = getConn().prepareStatement(QUERY_DELETE)) {
             statement.setString(1, id);
 
-            log.info("{}", statement);
+            log.info("{}\n", statement);
             statement.executeUpdate();
 
         } catch (final SQLException ex) {

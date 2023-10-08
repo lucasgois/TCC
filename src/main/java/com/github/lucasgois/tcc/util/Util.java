@@ -1,6 +1,6 @@
 package com.github.lucasgois.tcc.util;
 
-import com.github.lucasgois.tcc.exce.TccRuntimeException;
+import com.github.lucasgois.tcc.exceptions.TccRuntimeException;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -34,7 +34,7 @@ public class Util {
     }
 
     @NotNull
-    private static List<Pair<String, String>> listFilesWithHashes(final String directoryPathMain, final Path directoryPath) throws IOException, NoSuchAlgorithmException {
+    private static List<Pair<String, String>> criarListaDeArquivoEHash(final String directoryPathMain, final Path directoryPath) throws IOException, NoSuchAlgorithmException {
         final List<Pair<String, String>> fileList = new ArrayList<>();
 
         try (final DirectoryStream<Path> directoryStream = Files.newDirectoryStream(directoryPath)) {
@@ -42,13 +42,11 @@ public class Util {
             for (final Path filePath : directoryStream) {
 
                 if (Files.isDirectory(filePath)) {
-                    fileList.addAll(listFilesWithHashes(directoryPathMain, filePath));
+                    fileList.addAll(criarListaDeArquivoEHash(directoryPathMain, filePath));
 
                 } else {
                     final String fileHash = calcularHash(Files.readAllBytes(filePath));
                     final String filePathString = filePath.toString().replace(directoryPathMain, "");
-
-                    log.info("{} {}", fileHash, filePathString);
 
                     fileList.add(new Pair<>(fileHash, filePathString));
                 }
@@ -59,9 +57,8 @@ public class Util {
     }
 
     @NotNull
-    public static List<Pair<String, String>> listFilesWithHashes(final Path directoryPath) throws IOException, NoSuchAlgorithmException {
-        log.info("directoryPath: {}", directoryPath);
-        return listFilesWithHashes(directoryPath.toString(), directoryPath);
+    public static List<Pair<String, String>> criarListaDeArquivoEHash(final Path directoryPath) throws IOException, NoSuchAlgorithmException {
+        return criarListaDeArquivoEHash(directoryPath.toString(), directoryPath);
     }
 
     @NotNull
@@ -80,5 +77,15 @@ public class Util {
         }
 
         return builder.toString();
+    }
+
+    public static void criarPasta(final Path pasta) {
+        if (Files.notExists(pasta)) {
+            try {
+                Files.createDirectories(pasta);
+            } catch (final IOException ex) {
+                throw new TccRuntimeException("Não foi possível criar o diretório: " + pasta, ex);
+            }
+        }
     }
 }

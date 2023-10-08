@@ -1,4 +1,4 @@
-package com.github.lucasgois.tcc.exce;
+package com.github.lucasgois.tcc.exceptions;
 
 public class TccRuntimeException extends RuntimeException {
 

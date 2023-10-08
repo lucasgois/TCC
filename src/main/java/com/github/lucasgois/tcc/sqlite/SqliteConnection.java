@@ -1,11 +1,10 @@
 package com.github.lucasgois.tcc.sqlite;
 
-import com.github.lucasgois.tcc.exce.TccRuntimeException;
+import com.github.lucasgois.tcc.exceptions.TccRuntimeException;
+import com.github.lucasgois.tcc.util.Util;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -57,14 +56,9 @@ public class SqliteConnection {
     private void connect() {
         Path url = Path.of(System.getProperty("user.home") + "\\tcc");
 
-        if (Files.notExists(url)) {
-            try {
-                Files.createDirectories(url);
-            } catch (IOException ex) {
-                throw new TccRuntimeException("Não foi possível criar o diretório: " + url, ex);
-            }
-        }
-        log.info("{}", url.toUri());
+        Util.criarPasta(url);
+
+        log.info("banco: {}", url.toUri());
 
         url = url.resolve("tcc.db");
 

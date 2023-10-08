@@ -1,4 +1,8 @@
 .idea
 **/target
 **/*.iml
+
+config.txt
 src/test/resources/saida/**
+entrada
+saida
