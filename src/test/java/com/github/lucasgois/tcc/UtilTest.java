@@ -3,6 +3,7 @@ package com.github.lucasgois.tcc;
 import com.github.lucasgois.tcc.util.Util;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;

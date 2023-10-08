@@ -91,7 +91,7 @@ public class ArquivoDao {
         }
     }
 
-    public String insert(final Arquivo arquivo) {
+    public static String insert(final Arquivo arquivo) {
         log.info("{}", arquivo);
 
         insertArquivo(arquivo);
@@ -99,7 +99,7 @@ public class ArquivoDao {
         return LocalizacoesDao.insert(arquivo.getHash(), arquivo.getCaminho().toString());
     }
 
-    public void delete(final String id) {
+    public static void delete(final String id) {
 
         try (final PreparedStatement statement = getConn().prepareStatement(QUERY_DELETE)) {
             statement.setString(1, id);

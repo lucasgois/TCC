@@ -1,9 +1,11 @@
 package com.github.lucasgois.tcc.localizacoes;
 
 import com.github.lucasgois.tcc.exce.TccRuntimeException;
+import com.github.lucasgois.tcc.sqlite.arquivo.Arquivo;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
+import java.nio.file.Path;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -70,5 +72,33 @@ public class LocalizacoesDao {
         }
 
         return uuid;
+    }
+
+    @NotNull
+    public static Arquivo buscarArquivo(final String uuid) {
+        final String sql = """
+                SELECT arquivos.hash, arquivos.bytea, localizacoes.caminho \
+                FROM localizacoes \
+                LEFT JOIN arquivos ON arquivos.hash = localizacoes.hash_arquivo
+                WHERE uuid_localizacao = ? \
+                """;
+
+        try (final PreparedStatement statement = getConn().prepareStatement(sql)) {
+            statement.setString(1, uuid);
+
+            log.info("{}", statement);
+
+            try (final ResultSet resultSet = statement.executeQuery()) {
+                final Arquivo arquivo = new Arquivo();
+                arquivo.setHash(resultSet.getString("hash"));
+                arquivo.setCaminho(Path.of(resultSet.getString("caminho")));
+                arquivo.setBytea(resultSet.getBytes("bytea"));
+
+                return arquivo;
+            }
+
+        } catch (final SQLException ex) {
+            throw new TccRuntimeException(ex);
+        }
     }
 }

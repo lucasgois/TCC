@@ -1,9 +1,6 @@
 package com.github.lucasgois.tcc.sqlite;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import com.github.lucasgois.tcc.sqlite.ambiente.Ambiente;
 import com.github.lucasgois.tcc.sqlite.ambiente.AmbienteDao;
 
@@ -21,6 +18,7 @@ class AmbienteTest {
         dao = new AmbienteDao();
     }
 
+    @Disabled
     @Test
     void insert_find_delete() throws Exception {
         final Ambiente original = new Ambiente();

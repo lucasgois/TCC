@@ -43,20 +43,6 @@ CREATE TABLE IF NOT EXISTS localizacoes
     UNIQUE (hash_arquivo, caminho)
 );
 
-CREATE TABLE IF NOT EXISTS mapeamento
-(
-    uuid_mapeamento  TEXT NOT NULL,
-    uuid_versao      TEXT NOT NULL,
-    uuid_localizacao TEXT NOT NULL,
-    criado_em        TEXT,
-    atualizado_em    TEXT,
-    PRIMARY KEY (uuid_mapeamento),
-    FOREIGN KEY (uuid_versao) REFERENCES versoes (uuid_versao),
-    FOREIGN KEY (uuid_localizacao) REFERENCES localizacoes (uuid_localizacao),
-    UNIQUE (uuid_mapeamento),
-    UNIQUE (uuid_versao, uuid_localizacao)
-);
-
 CREATE TABLE IF NOT EXISTS versoes
 (
     uuid_versao   TEXT NOT NULL,
@@ -70,4 +56,18 @@ CREATE TABLE IF NOT EXISTS versoes
     FOREIGN KEY (uuid_modulo) REFERENCES modulos (uuid_modulo),
     UNIQUE (uuid_versao),
     UNIQUE (nome)
+);
+
+CREATE TABLE IF NOT EXISTS mapeamento
+(
+    uuid_mapeamento  TEXT NOT NULL,
+    uuid_versao      TEXT NOT NULL,
+    uuid_localizacao TEXT NOT NULL,
+    criado_em        TEXT,
+    atualizado_em    TEXT,
+    PRIMARY KEY (uuid_mapeamento),
+    FOREIGN KEY (uuid_versao) REFERENCES versoes (uuid_versao),
+    FOREIGN KEY (uuid_localizacao) REFERENCES localizacoes (uuid_localizacao),
+    UNIQUE (uuid_mapeamento),
+    UNIQUE (uuid_versao, uuid_localizacao)
 );

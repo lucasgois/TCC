@@ -8,6 +8,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static com.github.lucasgois.tcc.sqlite.SqliteConnection.getConn;
@@ -61,6 +63,31 @@ public class MapeamentoDao {
             statement.executeUpdate();
 
         } catch (final SQLException ex) {
+            throw new TccRuntimeException(ex);
+        }
+    }
+
+    @NotNull
+    public static List<String> listaPorUuidVersao(final String uuidVersao) {
+        final List<String> localizacoes = new ArrayList<>();
+        final String sql = """
+                SELECT uuid_localizacao FROM mapeamento \
+                WHERE mapeamento.uuid_versao = ? \
+                """;
+
+        try (final PreparedStatement statement = getConn().prepareStatement(sql)) {
+            statement.setString(1, uuidVersao);
+
+            try (final ResultSet resultSet = statement.executeQuery()) {
+
+                while (resultSet.next()) {
+                    localizacoes.add(resultSet.getString("uuid_localizacao"));
+                }
+
+                return localizacoes;
+            }
+
+        } catch (SQLException ex) {
             throw new TccRuntimeException(ex);
         }
     }
