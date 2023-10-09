@@ -27,12 +27,14 @@ public class Dao {
             throw new NoSuchFileException("Arquivo não encontrado: " + caminhoCompleto);
         }
 
-        final byte[] bytea = Files.readAllBytes(caminhoCompleto);
+        byte[] bytea = Util.lerArquivo(caminhoCompleto);
+        final String hash = Util.calcularHash(bytea);
+        bytea = Util.gzipar(bytea);
 
         final Arquivo arquivo = new Arquivo();
 
         arquivo.setCaminho(caminhoCompleto.subpath(1, caminhoCompleto.getNameCount()));
-        arquivo.setHash(Util.calcularHash(bytea));
+        arquivo.setHash(hash);
         arquivo.setBytea(bytea);
 
         return arquivo;

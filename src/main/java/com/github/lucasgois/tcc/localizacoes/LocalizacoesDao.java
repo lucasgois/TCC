@@ -2,6 +2,7 @@ package com.github.lucasgois.tcc.localizacoes;
 
 import com.github.lucasgois.tcc.exceptions.TccRuntimeException;
 import com.github.lucasgois.tcc.sqlite.arquivo.Arquivo;
+import com.github.lucasgois.tcc.util.Util;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
@@ -92,7 +93,10 @@ public class LocalizacoesDao {
                 final Arquivo arquivo = new Arquivo();
                 arquivo.setHash(resultSet.getString("hash"));
                 arquivo.setCaminho(Path.of(resultSet.getString("caminho")));
-                arquivo.setBytea(resultSet.getBytes("bytea"));
+
+                byte[] bytea = resultSet.getBytes("bytea");
+                bytea = Util.ungzipar(bytea);
+                arquivo.setBytea(bytea);
 
                 return arquivo;
             }
